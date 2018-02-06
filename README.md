@@ -1,2 +1,2 @@
-# Fishii A Fishackathon Project
+# Fishii - A Fishackathon Project
 
