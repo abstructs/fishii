@@ -1,63 +1,52 @@
-from flask import Flask
-from flask import request
-from flask import jsonify
-from flask import g
-from flask import send_from_directory
+from flask import Flask, request, jsonify, g, send_from_directory, url_for, render_template, redirect, flash, abort
+from werkzeug.utils import secure_filename
 import sys
 import os
 import sqlite3 
+# add parent to path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'public')
+import fishii_model.keras_model
 
-DATABASE = 'fishbase.db'
 
-app = Flask(__name__)
+UPLOAD_FOLDER = "./images"
+ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png"]
 
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-    return db
+app = app = Flask(__name__, static_folder='public')  
 
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
 
-def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
-    rv = cur.fetchall()
-    cur.close()
-    return (rv[0] if rv else None) if one else rv
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/predict', methods=['GET', 'POST'])
+def predict():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            return jsonify({"error": "file not found, field name should be 'file'"})
+            # return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            return jsonify({"error": "file name empty"})
+
+            # return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = app.config['UPLOAD_FOLDER']
+            fullpath = os.path.join(filepath, filename)
+            file.save(fullpath)
+
+            # use filepath and filename to get file, run model and return prediction
+            
+            return jsonify({'predictions': ['2']})
+
+    return send_from_directory(app.static_folder, 'index.html')
 
 @app.route("/")
 def index():
-    db = get_db()
-    query_db("SELECT * FROM User")
-    return jsonify(request.args)
-
-@app.route("/signup")
-def signup():
-    username = request.args.get('username')
-    password = request.args.get('password')
-
-    return query_db("SELECT username FROM User WHERE username=?", username)
-
-    verify_user(username, password) 
-
-    if verify_user(username, password):
-        return "Success"
-    else:
-        return "failure"
-    db = get_db()
-    query_db("SELECT username FROM User")
-    return jsonify()
-
-def verify_user(username, password):
-    try:
-        if not(len(username) > 0 and len(username) < 16):
-            print("\n\n\n", file=sys.stderr)
-            
-    except TypeError:
-        return False
+    return redirect('/predict')

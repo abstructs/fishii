@@ -8,10 +8,9 @@ import pandas as pd
 import numpy as np
 import h5py
 
-def conv_model(X_train, y_train, X_test, y_test, input_shape_, history, batch_size=30, epochs = 1):
+def conv_model(X_train, y_train, X_test, y_test, input_shape_, history, batch_size=30, epochs = 6):
 	y_train = pd.get_dummies(y_train)
-	if y_test != None:
-		y_test = pd.get_dummies(y_test)
+	y_test = pd.get_dummies(y_test)
 
 	model = Sequential()
 
@@ -28,9 +27,9 @@ def conv_model(X_train, y_train, X_test, y_test, input_shape_, history, batch_si
 	model.add(Dropout(.25))
 
 	# #2 
-	model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
+	model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
 
-	model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
+	model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
  
 	model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
@@ -39,12 +38,13 @@ def conv_model(X_train, y_train, X_test, y_test, input_shape_, history, batch_si
 	#3
 	
 	model.add(Flatten())
-	model.add(Dense(128, activation='relu'))
+	model.add(Dense(256, activation='relu'))
 
-	model.add(Dense(11, activation='softmax'))
+	model.add(Dense(12, activation='softmax'))
 
 	# optimizer = keras.optimizers.SGD(lr=.0003)
 	# optimizer = keras.optimizers.RMSprop(lr=.0003)
+	# optimizer = keras.optimizers.Adam(lr=0.003)
 	optimizer = keras.optimizers.Adadelta(lr=.0003)
 
 	loss = keras.losses.categorical_crossentropy
@@ -57,7 +57,9 @@ def conv_model(X_train, y_train, X_test, y_test, input_shape_, history, batch_si
 	          batch_size=batch_size,
 	          epochs=epochs,
 	          verbose=1,
-	        #   validation_data=(X_test, y_test),
+			  shuffle=True,
+			#   initial_epoch=1,
+	          validation_data=(X_test, y_test),
 	          callbacks=[history])
 
 	# score = model.evaluate(X_test, y_test, verbose=0)
@@ -102,10 +104,10 @@ if __name__ == "__main__":
 
 	# # serialize model to JSON
 	model_json = model.to_json()
-	with open("model.json", "w") as json_file:
+	with open("model100.json", "w") as json_file:
 		json_file.write(model_json)
 	# serialize weights to HDF5
-	model.save_weights("model.h5")
+	model.save_weights("model100.h5")
 	print("Saved model to disk")
 
 	
