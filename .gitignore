@@ -1,2 +1,4 @@
 fishii_data/
 fishii_model/fish
+fishii_model/created-data
+*.pkl
