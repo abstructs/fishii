@@ -11,62 +11,62 @@ import h5py
 def conv_model(X_train, y_train, X_test, y_test, input_shape_, history, batch_size=30, epochs = 6):
 	y_train = pd.get_dummies(y_train)
 	y_test = pd.get_dummies(y_test)
+	print("Hi")
+	# model = Sequential()
 
-	model = Sequential()
+	# #1
+	# model.add(Conv2D(32, kernel_size=(3, 3),# strides=(1, 1),
+	#                  activation='relu',
+	#                  input_shape=(256, 256, 3),
+	#                  data_format='channels_last'))
 
-	#1
-	model.add(Conv2D(32, kernel_size=(3, 3),# strides=(1, 1),
-	                 activation='relu',
-	                 input_shape=(256, 256, 3),
-	                 data_format='channels_last'))
+	# model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
 
-	model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
+	# model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
-	model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+	# model.add(Dropout(.25))
 
-	model.add(Dropout(.25))
+	# # #2 
+	# model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
 
-	# #2 
-	model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
-
-	model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
+	# model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
  
-	model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+	# model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
-	model.add(Dropout(.25))
+	# model.add(Dropout(.25))
 	
-	#3
+	# #3
 	
-	model.add(Flatten())
-	model.add(Dense(256, activation='relu'))
+	# model.add(Flatten())
+	# model.add(Dense(256, activation='relu'))
 
-	model.add(Dense(12, activation='softmax'))
+	# model.add(Dense(12, activation='softmax'))
 
-	# optimizer = keras.optimizers.SGD(lr=.0003)
-	# optimizer = keras.optimizers.RMSprop(lr=.0003)
-	# optimizer = keras.optimizers.Adam(lr=0.003)
-	optimizer = keras.optimizers.Adadelta(lr=.0003)
+	# # optimizer = keras.optimizers.SGD(lr=.0003)
+	# # optimizer = keras.optimizers.RMSprop(lr=.0003)
+	# # optimizer = keras.optimizers.Adam(lr=0.003)
+	# optimizer = keras.optimizers.Adadelta(lr=.0003)
 
-	loss = keras.losses.categorical_crossentropy
-	# loss = keras.losses.binary_crossentropy
+	# loss = keras.losses.categorical_crossentropy
+	# # loss = keras.losses.binary_crossentropy
 
-	model.compile(loss=loss,
-              optimizer=optimizer,
-              metrics=['accuracy'])
-	model.fit(X_train, y_train,
-	          batch_size=batch_size,
-	          epochs=epochs,
-	          verbose=1,
-			  shuffle=True,
-			#   initial_epoch=1,
-	          validation_data=(X_test, y_test),
-	          callbacks=[history])
+	# model.compile(loss=loss,
+    #           optimizer=optimizer,
+    #           metrics=['accuracy'])
+	# model.fit(X_train, y_train,
+	#           batch_size=batch_size,
+	#           epochs=epochs,
+	#           verbose=1,
+	# 		  shuffle=True,
+	# 		#   initial_epoch=1,
+	#           validation_data=(X_test, y_test),
+	#           callbacks=[history])
 
-	# score = model.evaluate(X_test, y_test, verbose=0)
-	# print('Test loss:', score[0])
-	# print('Test accuracy:', score[1])	
+	# # score = model.evaluate(X_test, y_test, verbose=0)
+	# # print('Test loss:', score[0])
+	# # print('Test accuracy:', score[1])	
 
-	return model
+	# return model
 
 
 class AccuracyHistory(keras.callbacks.Callback):
@@ -89,10 +89,10 @@ if __name__ == "__main__":
 		X_test, y_test = extract_pickle(test_data)
 	else:
 		print('Loading X')
-		x = np.load('x_train.npy')
+		x = np.load('x_train100.npy')
 		print("Done")
 		print('Loading Y')
-		y = np.load('y_train.npy')
+		y = np.load('y_train100.npy')
 		print("Done")
 		X_train = x
 		X_test = None

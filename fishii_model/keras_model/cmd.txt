@@ -1,1 +1,1 @@
-python conv.py train.pkl test.pkl
+python3 conv.py train.pkl test.pkl

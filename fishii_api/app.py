@@ -3,10 +3,15 @@ from werkzeug.utils import secure_filename
 import sys
 import os
 import sqlite3 
+from PIL import Image
+import numpy as np
 # add parent to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import fishii_model.keras_model
+import fishii_model.keras_model.model as modelPkg
+
+# load model 
+model = modelPkg.Model().model
 
 
 UPLOAD_FOLDER = "./images"
@@ -41,9 +46,20 @@ def predict():
             fullpath = os.path.join(filepath, filename)
             file.save(fullpath)
 
-            # use filepath and filename to get file, run model and return prediction
+            # f = Image.open(fullpath)
+
+            # img_as_arr = np.array(f.resize((256,256)))
+
+            # img_as_arr = img_as_arr.reshape(1, 256, 256, 3)
             
-            return jsonify({'predictions': ['2']})
+            # preds = model.predict(img_as_arr)
+            # use filepath and filename to get file, run model and return prediction
+            preds = {
+                'Alligator Gar': '20%',
+                'Rainbow Trout': '13%',
+                'Catfish': '6%'
+            }
+            return jsonify({'predictions': preds})
 
     return send_from_directory(app.static_folder, 'index.html')
 
